@@ -45,3 +45,20 @@ pho::api::PPhoXi initialize_camera()
         }
     }
 }
+
+void initialize_acquiring(pho::api::PPhoXi &PhoXiDevice)
+{
+    if (PhoXiDevice->isAcquiring()) {
+        // Stop acquisition to change trigger mode
+        PhoXiDevice->StopAcquisition();
+    }
+
+    PhoXiDevice->TriggerMode = pho::api::PhoXiTriggerMode::Software;
+    std::cout << "Software trigger mode was set" << std::endl;
+    PhoXiDevice->ClearBuffer();
+    PhoXiDevice->StartAcquisition();
+    if (!PhoXiDevice->isAcquiring()) {
+        std::cout << "Your device could not start acquisition!" << std::endl;
+        return;
+    }
+}

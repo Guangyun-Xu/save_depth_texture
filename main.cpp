@@ -23,6 +23,9 @@ int main()
     }else{
         std::cout<<"begin save image!"<< std::endl;
     }
+
+    initialize_acquiring(device);
+
     return 0;
 }
 
