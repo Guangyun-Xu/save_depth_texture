@@ -32,7 +32,8 @@ int main()
 {
     // settings
     enum save_method {custom=1, sequence=2};
-    save_method method = custom;
+    save_method method = sequence;
+
     std::string custom_save_dir = "../data";
     std::string sequence_save_dir = "../data";
 
@@ -53,6 +54,8 @@ int main()
         break;
     case 2:
         std::cout << "sequence " << std::endl;
+        squence_save(device, sequence_save_dir);
+        break;
     default:
         std::cout << "please set right save method! " <<std::endl;
         break;
@@ -95,7 +98,7 @@ int coustm_save(const pho::api::PPhoXi &phoXi_device,
    pho::api::PFrame frame = get_frame(phoXi_device);
 
    std::string depth_path = save_dir + "/depth.png";
-   std::string texture_path = save_dir + "/texture.png";
+   std::string texture_path = save_dir + "/texture.jpg";
 
    save(frame, depth_path, texture_path);
 
@@ -105,7 +108,35 @@ int coustm_save(const pho::api::PPhoXi &phoXi_device,
 int squence_save(const pho::api::PPhoXi &phoXi_device,
                  const std::string &save_dir)
 {
+    if (access(save_dir.c_str(), 0) == -1)
+        mkdir(save_dir.c_str(), S_IRWXU);
 
+    std::string depth_dir = save_dir + "/depth";
+    std::string texture_dir = save_dir + "/texture";
+    if (access(depth_dir.c_str(), 0) == -1)
+        mkdir(depth_dir.c_str(), S_IRWXU);
+    if (access(texture_dir.c_str(), 0) == -1)
+        mkdir(texture_dir.c_str(), S_IRWXU);
+
+    int max_img_num = 100;
+    for (int i=0; i<max_img_num; i++){
+
+        std::string file_name = std::to_string(i);
+        while(file_name.size() < 6){
+            file_name = "0" + file_name;
+        }
+        std::string depth_path = depth_dir + "/" + file_name + ".png";
+        std::string texture_path = texture_dir + "/" + file_name + ".jpg";
+
+        pho::api::PFrame frame = get_frame(phoXi_device);
+
+        save(frame, depth_path, texture_path);
+
+        // cv::Mat img = cv::imread(depth_path);
+        cv::imshow(file_name, cv::imread(depth_path));
+        cv::waitKey(0);
+
+    }
 }
 
 int save(const pho::api::PFrame &frame,
