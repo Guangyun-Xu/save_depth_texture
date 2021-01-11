@@ -27,7 +27,6 @@ int main()
     initialize_acquiring(device);
 
 
-
     return 0;
 }
 
