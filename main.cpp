@@ -37,30 +37,31 @@ int main()
     std::string custom_save_dir = "../data";
     std::string sequence_save_dir = "../data";
 
+    //initialize
     pho::api::PPhoXi device = initialize_camera();
     if(!device){
         return 0;
     }else{
         std::cout<<"begin save image!"<< std::endl;
     }
-
     initialize_acquiring(device);
 
-
+    // choose save method
     switch (method) {
     case 1:
         std::cout << "custom " << std::endl;
         coustm_save(device, custom_save_dir);
         break;
+
     case 2:
         std::cout << "sequence " << std::endl;
         squence_save(device, sequence_save_dir);
         break;
+
     default:
         std::cout << "please set right save method! " <<std::endl;
         break;
     }
-
 
     return 0;
 }
@@ -157,6 +158,7 @@ int save(const pho::api::PFrame &frame,
     depth_mat.convertTo(depth_mat, CV_16UC1);
     cv::Mat texture_mat(cv::Size(width, height), CV_32FC1, texture_data);
 
+    // crop ROI
     float crop_rate = (1.0f - (671.0f/1032.0f))/2.0f;
     int width_top = int(width*crop_rate);
     int height_down = int(height*crop_rate);
@@ -168,7 +170,6 @@ int save(const pho::api::PFrame &frame,
     // normalize texture image
     cv::normalize(cropped_texture, cropped_texture, 0, 450, cv::NORM_MINMAX);
 
-
     cv::imwrite(depth_path, cropped_depth);
     cv::imwrite(texture_path, cropped_texture);
 
@@ -176,5 +177,4 @@ int save(const pho::api::PFrame &frame,
     std::cout << "texture saved in:" << texture_path << std::endl;
 
     return 0;
-
 }
