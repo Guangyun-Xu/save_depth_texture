@@ -32,9 +32,9 @@ int main()
 {
     // settings
     enum save_method {custom=1, sequence=2};
-    save_method method = sequence;
+    save_method method = custom;
 
-    std::string custom_save_dir = "../data";
+    std::string custom_save_dir = "/home/xu/Project/SGP/dataset/sgp_dataset/real_data/online/000000";
     std::string sequence_save_dir = "../data";
 
     //initialize
@@ -98,8 +98,8 @@ int coustm_save(const pho::api::PPhoXi &phoXi_device,
 
    pho::api::PFrame frame = get_frame(phoXi_device);
 
-   std::string depth_path = save_dir + "/depth.png";
-   std::string texture_path = save_dir + "/texture.jpg";
+   std::string depth_path = save_dir + "/depth/000000.png";
+   std::string texture_path = save_dir + "/rgb/000000.jpg";
 
    save(frame, depth_path, texture_path);
 
@@ -168,7 +168,9 @@ int save(const pho::api::PFrame &frame,
     cv::Mat cropped_texture = texture_mat(crop_roi);
 
     // normalize texture image
-    cv::normalize(cropped_texture, cropped_texture, 0, 450, cv::NORM_MINMAX);
+    cv::normalize(cropped_texture, cropped_texture, 0, 400, cv::NORM_MINMAX);
+    cropped_texture.convertTo(cropped_texture, CV_8UC1);
+    cv::equalizeHist(cropped_texture, cropped_texture);
 
     cv::imwrite(depth_path, cropped_depth);
     cv::imwrite(texture_path, cropped_texture);
